@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BROWNBEATS — Music Producer</title>
+  <meta name="description" content="Producer and beatmaker. Beats, mixing, mastering, and artist development. Play with the live beat maker, then book a session." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="#top">◆ BROWNBEATS</a>
+  <div class="nav-links">
+    <a href="#work">Work</a>
+    <a href="#services">Services</a>
+    <a href="#studio">Studio</a>
+    <a href="#contact" class="nav-cta">Book a session</a>
+  </div>
+</nav>
+
+<header id="top" class="hero">
+  <p class="eyebrow">Producer · Beatmaker · Mix engineer</p>
+  <h1>I make beats that<br /><span>sit in your chest.</span></h1>
+  <p class="lede">
+    Afrobeats, drill, and lo-fi out of Accra. Ten years of records, a room full of analog
+    gear, and a fast turnaround. Play something in the studio below — then tell me what
+    you want to build.
+  </p>
+  <div class="hero-actions">
+    <a href="#studio" class="btn primary">Open the studio</a>
+    <a href="#contact" class="btn">Book a session</a>
+  </div>
+
+  <dl class="stats">
+    <div><dt>Records produced</dt><dd>180+</dd></div>
+    <div><dt>Streams</dt><dd>40M</dd></div>
+    <div><dt>Typical turnaround</dt><dd>5 days</dd></div>
+  </dl>
+</header>
+
+<main>
+
+  <section id="work" class="section">
+    <h2 class="section-title">Selected work</h2>
+    <div class="cards">
+      <article class="card">
+        <span class="tag">Afrobeats</span>
+        <h3>Harmattan Nights</h3>
+        <p>Full production and mix for a six-track EP. Live percussion tracked in Osu.</p>
+        <p class="meta">Ama Serwaa · 2025</p>
+      </article>
+      <article class="card">
+        <span class="tag">Drill</span>
+        <h3>Kaneshie Blocks</h3>
+        <p>Beat, arrangement, and mix. Sliding 808s, dry drums, no reverb on the vocal.</p>
+        <p class="meta">Kojo P · 2025</p>
+      </article>
+      <article class="card">
+        <span class="tag">Lo-fi</span>
+        <h3>Slow Sunday</h3>
+        <p>A 12-beat instrumental tape. Dusty keys, tape saturation, and a lot of patience.</p>
+        <p class="meta">Self-released · 2024</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="services" class="section">
+    <h2 class="section-title">Services</h2>
+    <div class="cards">
+      <article class="card price">
+        <h3>Custom beat</h3>
+        <p class="amount">from ₵1,200</p>
+        <ul>
+          <li>Built to your reference</li>
+          <li>Two rounds of revisions</li>
+          <li>Trackouts + exclusive rights</li>
+        </ul>
+      </article>
+      <article class="card price featured">
+        <span class="badge">Most booked</span>
+        <h3>Full production</h3>
+        <p class="amount">from ₵4,500</p>
+        <ul>
+          <li>Beat, arrangement, and session musicians</li>
+          <li>Vocal tracking and comping</li>
+          <li>Mix and master included</li>
+        </ul>
+      </article>
+      <article class="card price">
+        <h3>Mix &amp; master</h3>
+        <p class="amount">from ₵900</p>
+        <ul>
+          <li>Per song, stems welcome</li>
+          <li>Streaming-ready loudness</li>
+          <li>48-hour turnaround available</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- The beat maker: a real Web Audio sequencer, not a demo reel. -->
+  <section id="studio" class="section">
+    <h2 class="section-title">The studio <small>make a beat right here</small></h2>
+
+    <div class="console">
+      <div class="topbar">
+        <div class="transport">
+          <button id="playBtn" class="btn primary play" aria-label="Play or stop">▶ Play</button>
+
+          <label class="field">
+            <span>Tempo <b id="bpmLabel">100</b> BPM</span>
+            <input id="bpm" type="range" min="60" max="180" step="1" value="100" />
+          </label>
+
+          <label class="field">
+            <span>Swing <b id="swingLabel">0</b>%</span>
+            <input id="swing" type="range" min="0" max="60" step="1" value="0" />
+          </label>
+
+          <label class="field">
+            <span>Master <b id="volLabel">80</b></span>
+            <input id="volume" type="range" min="0" max="100" step="1" value="80" />
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="randomBtn" class="btn">🎲 Randomize</button>
+          <button id="clearBtn" class="btn">🧹 Clear</button>
+          <button id="saveBtn" class="btn">💾 Save</button>
+          <button id="loadBtn" class="btn">📂 Load</button>
+          <button id="exportBtn" class="btn">⬇ Export WAV</button>
+        </div>
+      </div>
+
+      <div class="songbar">
+        <div class="group">
+          <span class="group-label">Pattern</span>
+          <div id="patterns" class="patterns"></div>
+        </div>
+
+        <div class="group">
+          <label class="switch">
+            <input id="songMode" type="checkbox" />
+            <span>Song mode</span>
+          </label>
+          <div id="chain" class="chain"></div>
+        </div>
+
+        <div class="group right">
+          <label class="select">
+            <span>Key</span>
+            <select id="root">
+              <option value="60">C</option>
+              <option value="62">D</option>
+              <option value="64">E</option>
+              <option value="65">F</option>
+              <option value="67">G</option>
+              <option value="69">A</option>
+            </select>
+          </label>
+
+          <label class="select">
+            <span>Scale</span>
+            <select id="scale">
+              <option value="minorPentatonic">Minor pentatonic</option>
+              <option value="majorPentatonic">Major pentatonic</option>
+              <option value="blues">Blues</option>
+              <option value="dorian">Dorian</option>
+              <option value="naturalMinor">Natural minor</option>
+              <option value="major">Major</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">Drums</h3>
+        <div id="drumGrid" class="grid drums"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">
+          Melody
+          <span id="melodyStrip" class="strip inline"></span>
+        </h3>
+        <div id="melodyGrid" class="grid melody"></div>
+      </div>
+
+      <p class="statusbar">
+        <span id="status">Ready. Press Play (or hit <kbd>Space</kbd>).</span>
+      </p>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <h2 class="section-title">Book a session</h2>
+
+    <div class="contact">
+      <div class="contact-info">
+        <p class="lede">
+          Tell me what you're making and when you need it. I reply to every message within
+          a day, and I'll be straight with you if it isn't a fit.
+        </p>
+        <ul class="contact-list">
+          <li><span>Email</span><a href="mailto:bookings@brownbeats.com">bookings@brownbeats.com</a></li>
+          <li><span>Studio</span>Osu, Accra — by appointment</li>
+          <li><span>Hours</span>Mon–Sat, 10:00–20:00 GMT</li>
+        </ul>
+      </div>
+
+      <form id="contactForm" class="contact-form" novalidate>
+        <label>
+          <span>Name</span>
+          <input name="name" type="text" required placeholder="Your name" />
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input name="email" type="email" required placeholder="you@example.com" />
+        </label>
+
+        <label>
+          <span>What do you need?</span>
+          <select name="service">
+            <option>Custom beat</option>
+            <option>Full production</option>
+            <option>Mix &amp; master</option>
+            <option>Something else</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Budget <small>optional</small></span>
+          <input name="budget" type="text" placeholder="e.g. ₵2,000" />
+        </label>
+
+        <label class="wide">
+          <span>Project</span>
+          <textarea name="message" rows="4" required placeholder="Genre, references, deadline…"></textarea>
+        </label>
+
+        <button type="submit" class="btn primary wide">Send enquiry</button>
+        <p id="formNote" class="form-note">Opens your mail app with the details filled in.</p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>◆ BROWNBEATS — producer, Accra</span>
+  <span>Every sound on this page is synthesized live in your browser.</span>
+</footer>
+
+<script src="audio.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
