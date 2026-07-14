@@ -671,9 +671,12 @@ kbd {
 
 .contact-list a { color: var(--note); text-decoration: none; }
 
+/* minmax(0, 1fr), not 1fr: a grid column's automatic minimum is min-content, and a file
+ * input's min-content width is enormous. With plain 1fr it drags the column — and every
+ * field in it — wider than the card. */
 .contact-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 16px;
   padding: 28px;
   border: 1px solid var(--line);
@@ -685,6 +688,7 @@ kbd {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0; /* same reason: a flex/grid item refuses to shrink below min-content */
   font-size: 13px;
   color: var(--muted);
 }
@@ -696,6 +700,9 @@ kbd {
 .contact-form input,
 .contact-form select,
 .contact-form textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -704,6 +711,12 @@ kbd {
   font: inherit;
   font-size: 15px;
   resize: vertical;
+}
+
+/* Left alone, this is the widest thing on the page. */
+.contact-form input[type="file"] {
+  padding: 9px 12px;
+  font-size: 13px;
 }
 
 .contact-form input:focus,
@@ -741,7 +754,7 @@ kbd {
   .hero, .section { padding-left: 20px; padding-right: 20px; }
   .actions, .group.right { margin-left: 0; }
   .contact { grid-template-columns: 1fr; gap: 32px; }
-  .contact-form { grid-template-columns: 1fr; }
+  .contact-form { grid-template-columns: minmax(0, 1fr); padding: 20px; }
 }
 
 /* ---------- phones ----------
