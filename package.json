@@ -1,0 +1,9 @@
+{
+  "name": "brownbeats",
+  "private": true,
+  "type": "module",
+  "description": "Producer site with an in-browser beat maker and a beat store.",
+  "dependencies": {
+    "@vercel/blob": "^1.0.0"
+  }
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin — BROWNBEATS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="/">◆ BROWNBEATS</a>
+  <div class="nav-links">
+    <a href="/#beats">View the store</a>
+    <button id="signOut" class="btn" hidden>Sign out</button>
+  </div>
+</nav>
+
+<main class="section admin">
+
+  <!-- Sign in -->
+  <section id="gate">
+    <h2 class="section-title">Admin</h2>
+    <form id="loginForm" class="contact-form" style="max-width: 420px">
+      <label class="wide">
+        <span>Password</span>
+        <input name="password" type="password" required autocomplete="current-password"
+               placeholder="Your admin password" />
+      </label>
+      <button type="submit" class="btn primary wide">Sign in</button>
+      <p id="loginNote" class="form-note"></p>
+    </form>
+  </section>
+
+  <!-- Upload + manage -->
+  <section id="panel" hidden>
+    <h2 class="section-title">Upload a beat <small>it goes live immediately</small></h2>
+
+    <p class="notice">
+      <strong>Upload previews, not masters.</strong> Anything here gets a public URL, so
+      whatever a visitor can play, they can also download. Post a short or tagged version
+      and send the full trackouts once they have paid.
+    </p>
+
+    <form id="uploadForm" class="contact-form">
+      <label class="wide">
+        <span>Audio file <small>mp3, wav or ogg — up to 60 MB</small></span>
+        <input name="file" type="file" accept="audio/*" required />
+      </label>
+
+      <label>
+        <span>Title</span>
+        <input name="title" type="text" required placeholder="Harmattan Nights" />
+      </label>
+
+      <label>
+        <span>Type</span>
+        <select name="type">
+          <option value="beat">Full beat</option>
+          <option value="sample">Sample</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Genre</span>
+        <input name="genre" type="text" placeholder="Afrobeats" />
+      </label>
+
+      <label>
+        <span>BPM</span>
+        <input name="bpm" type="number" min="40" max="240" placeholder="102" />
+      </label>
+
+      <label>
+        <span>Key</span>
+        <input name="key" type="text" placeholder="Am" />
+      </label>
+
+      <label>
+        <span>Price <small>₵, optional</small></span>
+        <input name="price" type="number" min="0" placeholder="1200" />
+      </label>
+
+      <label class="wide">
+        <span>Notes <small>optional</small></span>
+        <textarea name="notes" rows="2" placeholder="Live percussion, sliding 808s…"></textarea>
+      </label>
+
+      <button type="submit" class="btn primary wide">Upload</button>
+      <p id="uploadNote" class="form-note"></p>
+    </form>
+
+    <h2 class="section-title" style="margin-top: 48px">
+      Your beats <small id="count"></small>
+    </h2>
+    <div id="list" class="admin-list"></div>
+  </section>
+
+</main>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>

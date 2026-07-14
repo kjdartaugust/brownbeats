@@ -13,6 +13,7 @@
   <a class="brand" href="#top">◆ BROWNBEATS</a>
   <div class="nav-links">
     <a href="#work">Work</a>
+    <a href="#beats">Beats</a>
     <a href="#services">Services</a>
     <a href="#studio">Studio</a>
     <a href="#contact" class="nav-cta">Book a session</a>
@@ -62,6 +63,14 @@
         <p>A 12-beat instrumental tape. Dusty keys, tape saturation, and a lot of patience.</p>
         <p class="meta">Self-released · 2024</p>
       </article>
+    </div>
+  </section>
+
+  <!-- Populated from /api/beats. The producer uploads these at /admin. -->
+  <section id="beats" class="section">
+    <h2 class="section-title">Beats for sale <small>press play, then make me an offer</small></h2>
+    <div id="beatStore" class="cards">
+      <p class="form-note">Loading the beats…</p>
     </div>
   </section>
 
@@ -262,5 +271,6 @@
 
 <script src="audio.js"></script>
 <script src="app.js"></script>
+<script src="store.js"></script>
 </body>
 </html>

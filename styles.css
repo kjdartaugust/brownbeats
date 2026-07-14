@@ -221,6 +221,89 @@ h1, h2, h3 { line-height: 1.2; }
   font-weight: 600;
 }
 
+/* ---------- beat store ---------- */
+
+.card.beat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card.beat h3 { margin: 8px 0 0; }
+.card.beat .meta { margin: 0; }
+
+.beat-player {
+  width: 100%;
+  height: 36px;
+  margin-top: auto; /* players line up across cards of differing text length */
+  border-radius: 8px;
+  filter: invert(0.92) hue-rotate(180deg); /* the native player ships light-on-light */
+}
+
+.beat-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.beat-foot .amount { font-size: 20px; }
+
+/* ---------- admin ---------- */
+
+.admin { max-width: 900px; }
+
+.notice {
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.notice strong { color: var(--text); }
+
+.admin-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.admin-meta {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-meta strong { font-size: 15px; }
+.admin-meta span { color: var(--muted); font-size: 13px; }
+
+.admin-row audio {
+  flex: 0 1 260px;
+  height: 34px;
+  filter: invert(0.92) hue-rotate(180deg);
+}
+
+.btn.danger { border-color: var(--drum); color: var(--drum); }
+
+@media (max-width: 700px) {
+  .admin-row { flex-wrap: wrap; }
+  .admin-row audio { flex: 1 1 100%; }
+}
+
 /* ---------- buttons ---------- */
 
 .btn {
