@@ -64,16 +64,12 @@ h1, h2, h3 { line-height: 1.2; }
   text-decoration: none;
 }
 
-.nav-links a:hover { color: var(--text); }
-
 .nav-cta {
   padding: 7px 14px;
   border: 1px solid var(--accent);
   border-radius: 999px;
   color: var(--accent) !important;
 }
-
-.nav-cta:hover { background: var(--accent); color: #1a1200 !important; }
 
 /* ---------- hero ---------- */
 
@@ -239,10 +235,21 @@ h1, h2, h3 { line-height: 1.2; }
   font-size: 15px;
   text-decoration: none;
   cursor: pointer;
+  touch-action: manipulation;
   transition: background 0.15s, border-color 0.15s;
 }
 
-.btn:hover { background: var(--cell); border-color: #3d4560; }
+/* Guard every hover rule: on a touchscreen a :hover state latches after the tap and
+ * leaves cells looking active when they are not. */
+@media (hover: hover) {
+  .btn:hover { background: var(--cell); border-color: #3d4560; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta:hover { background: var(--accent); color: #1a1200 !important; }
+  .mini:hover { background: var(--cell); }
+  .cell:hover { background: #303650; }
+  .contact-list a:hover { text-decoration: underline; }
+}
 
 .btn.primary {
   border-color: transparent;
@@ -250,8 +257,6 @@ h1, h2, h3 { line-height: 1.2; }
   color: #1a1200;
   font-weight: 600;
 }
-
-.btn.primary:hover { filter: brightness(1.08); }
 
 .play { min-width: 108px; }
 .play.active { background: var(--drum); color: #fff; }
@@ -436,9 +441,9 @@ h1, h2, h3 { line-height: 1.2; }
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
-.mini:hover { background: var(--cell); }
 .mini.mute-on { border-color: transparent; background: var(--drum); color: #fff; }
 .mini.solo-on { border-color: transparent; background: var(--accent); color: #1a1200; }
 
@@ -454,11 +459,11 @@ h1, h2, h3 { line-height: 1.2; }
   border-radius: 6px;
   background: var(--cell);
   cursor: pointer;
+  touch-action: manipulation; /* no double-tap-to-zoom delay when tapping steps */
 }
 
 /* Every 4th step starts a beat — lighten it so bars stay countable. */
 .cell.beat { border-color: #3d4560; }
-.cell:hover { background: #303650; }
 
 .cell.on {
   border-color: transparent;
@@ -475,6 +480,30 @@ h1, h2, h3 { line-height: 1.2; }
   outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
+
+/* Desktop keeps the mixer inside the drum grid; the standalone panel is for phones. */
+.mixer-panel { display: none; }
+
+.mixer-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.mixer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mixer-name {
+  flex: 0 0 68px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.mixer-row .strip { flex: 1 1 auto; width: auto; }
+.mixer-row .track-vol { flex: 1 1 auto; width: auto; }
 
 .statusbar {
   margin: 0;
@@ -524,7 +553,6 @@ kbd {
 }
 
 .contact-list a { color: var(--note); text-decoration: none; }
-.contact-list a:hover { text-decoration: underline; }
 
 .contact-form {
   display: grid;
@@ -597,4 +625,67 @@ kbd {
   .actions, .group.right { margin-left: 0; }
   .contact { grid-template-columns: 1fr; gap: 32px; }
   .contact-form { grid-template-columns: 1fr; }
+}
+
+/* ---------- phones ----------
+ *
+ * A 16-step grid cannot fit a phone at a usable tap size (16 × 30px of cells alone
+ * overflows a 390px viewport), so the panels keep scrolling sideways rather than
+ * shrinking the steps into unhittable slivers. What that costs you is context: scroll
+ * right and you can no longer tell which row you are drawing on. So the label column
+ * is pinned with `position: sticky` and the steps scroll underneath it. */
+@media (max-width: 700px) {
+  .nav { flex-wrap: wrap; gap: 10px 16px; padding: 12px 16px; }
+  .nav-links { flex-wrap: wrap; gap: 12px; }
+  .nav-links a { font-size: 14px; }
+
+  .hero { padding: 56px 16px 48px; }
+  .section { padding: 48px 16px; }
+  .stats { gap: 28px 40px; margin-top: 44px; }
+  .stats dd { font-size: 26px; }
+
+  .console { --label-w: 70px; --gap: 4px; }
+
+  .topbar, .songbar { gap: 14px; padding: 14px; }
+  .transport, .actions { gap: 10px; width: 100%; }
+  .field { flex: 1 1 130px; }
+  .field input[type="range"] { width: 100%; }
+  .actions .btn { flex: 1 1 auto; }
+
+  /* The in-grid mixer strips cost a column the grid cannot spare here: they would push
+   * the melody grid's label column to 162px — 42% of a 390px screen, permanently
+   * pinned — leaving barely seven of the sixteen steps visible. The strips move to
+   * .mixer-panel below and the grids keep only their labels. */
+  .grid .strip,
+  .panel-title .strip.inline { display: none; }
+  .mixer-panel { display: block; }
+
+  /* Left padding lives on the children, so the sticky label pins flush to the panel's
+   * edge and no cell can scroll into a gap beside it. */
+  .panel { padding: 14px 14px 14px 0; overscroll-behavior-x: contain; }
+  .panel-title { padding-left: 14px; }
+  .mixer-list { padding-left: 14px; }
+
+  /* Size the grid to its own columns instead of the 760px desktop floor, so the cells
+   * stay inside the grid box and the panel scrolls it as one piece. */
+  .grid { min-width: max-content; }
+  .grid.drums,
+  .grid.melody { grid-template-columns: var(--label-w) repeat(16, minmax(30px, 1fr)); }
+
+  .row-label {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    /* .grid centres its items, so the label box would only be as tall as its text and
+     * the cells would show through above and below it as they scroll past. */
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 6px 0 10px;
+    background: var(--surface);
+    font-size: 11px;
+  }
+
+  .mini { width: 26px; height: 26px; }
 }

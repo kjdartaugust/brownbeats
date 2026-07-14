@@ -149,6 +149,32 @@ function trackStrip(id) {
   return wrap;
 }
 
+/* The same mixer, laid out as a list. CSS shows this instead of the in-grid strips on
+ * phones. Both sets of controls write to the same state.mixer, so they cannot disagree
+ * about the mix — only one is ever on screen. */
+function buildMixerPanel() {
+  const box = document.getElementById('mixerPanel');
+  box.innerHTML = '';
+
+  const labelFor = (id) => DRUMS.find((d) => d.id === id)?.label ?? 'Melody';
+
+  TRACK_IDS.forEach((id) => {
+    const row = document.createElement('div');
+    row.className = 'mixer-row';
+
+    const name = document.createElement('span');
+    name.className = 'mixer-name';
+    name.textContent = labelFor(id);
+
+    const strip = document.createElement('div');
+    strip.className = 'strip';
+    strip.appendChild(trackStrip(id));
+
+    row.append(name, strip);
+    box.appendChild(row);
+  });
+}
+
 function buildGrid(container, rows, gridName) {
   container.innerHTML = '';
   cells[gridName] = [];
@@ -491,6 +517,7 @@ function syncControls() {
   buildGrid(document.getElementById('drumGrid'), DRUMS, 'drums');
   document.getElementById('melodyStrip').innerHTML = '';
   document.getElementById('melodyStrip').appendChild(trackStrip('melody'));
+  buildMixerPanel(); // load() swaps state.mixer wholesale; stale strips would edit the old one
   AudioEngine.setMasterVolume(state.volume);
 }
 
@@ -562,6 +589,7 @@ rebuildNotes();
 buildGrid(document.getElementById('drumGrid'), DRUMS, 'drums');
 buildGrid(document.getElementById('melodyGrid'), notes, 'melody');
 document.getElementById('melodyStrip').appendChild(trackStrip('melody'));
+buildMixerPanel();
 
 PATTERN_IDS.forEach((id) => {
   const btn = document.createElement('button');
