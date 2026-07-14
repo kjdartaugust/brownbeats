@@ -51,8 +51,10 @@ if (user && user.role === 'listener') {
     const progress = toast('Uploading… 0%', 'busy', { sticky: true });
 
     try {
-      // Straight to Blob. /api/blob-upload only mints the token, and only for a producer.
-      const blob = await upload(file.name, file, {
+      // Straight to Blob. /api/blob-upload only mints the token, and only for a producer
+      // — and it rejects any path outside this producer's own folder.
+      const safeName = file.name.replace(/[^\w.\- ]+/g, '_');
+      const blob = await upload(`beats/${user.id}/${safeName}`, file, {
         access: 'public',
         handleUploadUrl: '/api/blob-upload',
         onUploadProgress: ({ percentage }) => {

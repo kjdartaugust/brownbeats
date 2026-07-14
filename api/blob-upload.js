@@ -29,11 +29,19 @@ export default async function handler(req, res) {
         // A listener account must not be able to put files in the store's bucket.
         if (!mayUpload(user)) throw new Error('Only producers can upload beats.');
 
+        /* The CLIENT chooses the pathname — returning one from here does nothing, which
+         * a real upload proved by landing at the bucket root. So it is checked instead:
+         * uploads are confined to this producer's own folder, and cannot be written
+         * next to the catalogue and account records under data/. */
+        const expected = `beats/${user.id}/`;
+        if (!pathname.startsWith(expected) || pathname.includes('..')) {
+          throw new Error('Bad upload path.');
+        }
+
         return {
           allowedContentTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/ogg'],
           maximumSizeInBytes: MAX_BYTES,
           addRandomSuffix: true, // two producers may upload the same filename
-          pathname: `beats/${user.id}/${pathname}`,
         };
       },
 
