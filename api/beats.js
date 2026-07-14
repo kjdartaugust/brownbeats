@@ -2,9 +2,8 @@
  * POST   /api/beats        producer— record a beat whose audio is already in Blob
  * DELETE /api/beats?id=    owner or admin */
 
-import { del } from '@vercel/blob';
 import { requireUser, currentUser } from './_auth.js';
-import { readCatalogue, writeCatalogue, cleanBeat, mayDelete } from './_catalogue.js';
+import { readCatalogue, addBeat, removeBeat, cleanBeat } from './_catalogue.js';
 
 export default async function handler(req, res) {
   try {
@@ -29,11 +28,7 @@ export default async function handler(req, res) {
       if (!user) return;
 
       const { url, pathname, ...fields } = req.body ?? {};
-      const beat = cleanBeat(fields, { url, pathname }, user);
-
-      const beats = await readCatalogue();
-      beats.unshift(beat); // newest first
-      await writeCatalogue(beats);
+      const beat = await addBeat(cleanBeat(fields, { url, pathname }, user));
 
       return res.status(201).json(beat);
     }
@@ -42,21 +37,11 @@ export default async function handler(req, res) {
       const user = await requireUser(req, res);
       if (!user) return;
 
-      const beats = await readCatalogue();
-      const beat = beats.find((b) => b.id === req.query?.id);
-      if (!beat) return res.status(404).json({ error: 'No such beat.' });
+      // Ownership is decided inside removeBeat, next to the data it checks.
+      const result = await removeBeat(req.query?.id, user);
+      if (result.error) return res.status(result.status).json({ error: result.error });
 
-      // A producer may only remove their own. Checked here, on the server, because the
-      // dashboard simply not drawing the button is not a control.
-      if (!mayDelete(beat, user)) return res.status(403).json({ error: 'Not your beat.' });
-
-      await writeCatalogue(beats.filter((b) => b.id !== beat.id));
-
-      // Drop the audio too, or storage grows with every deleted beat. After the manifest
-      // write: an orphaned file is cheaper than a dead link.
-      if (beat.url) await del(beat.url).catch(() => {});
-
-      return res.status(200).json({ deleted: beat.id });
+      return res.status(200).json(result);
     }
 
     res.setHeader('Allow', 'GET, POST, DELETE');

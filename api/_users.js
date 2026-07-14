@@ -1,50 +1,40 @@
 /* Producer accounts.
  *
- * Like the catalogue, this is one JSON file in Blob rather than a database. That is a
- * deliberate trade for a site this size, and it has one real limit: two people signing
- * up in the same instant can clobber each other, because the file is read and rewritten
- * whole. Signups are rare enough that this is acceptable; if it stops being true, this
- * is the module to move onto Postgres, and nothing else has to change.
+ * One JSON blob per user under data/users/, not one users.json that gets rewritten —
+ * for the same reason as the catalogue: rewriting a shared file is read-modify-write, so
+ * two people signing up in the same moment would both read the old list, both append,
+ * and the second write would erase the first person's account.
  *
- * Passwords are never stored. Each one is scrypt-hashed with its own random salt, so a
- * dump of this file does not hand over anybody's password, and two producers who happen
- * to choose the same password get different hashes. */
+ * Passwords are never stored. Each is scrypt-hashed with its own random salt, which
+ * matters especially here: the Blob store is public, so these files must be safe to read.
+ * A salt per user also means two producers who pick the same password get different
+ * hashes, and one cracked password does not reveal the other. */
 
 import { list, put } from '@vercel/blob';
 import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 
 const scrypt = promisify(_scrypt);
-const USERS = 'data/users.json';
+const DIR = 'data/users/';
 const KEYLEN = 64;
 
 export async function readUsers() {
-  const { blobs } = await list({ prefix: USERS, limit: 1 });
-  if (!blobs.length) return [];
+  const { blobs } = await list({ prefix: DIR, limit: 1000 });
 
-  const res = await fetch(`${blobs[0].url}?t=${Date.now()}`, { cache: 'no-store' });
-  if (!res.ok) return [];
+  const users = await Promise.all(
+    blobs.map(async (b) => {
+      try {
+        const res = await fetch(b.url);
+        return res.ok ? await res.json() : null;
+      } catch {
+        return null;
+      }
+    })
+  );
 
-  try {
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
+  return users.filter(Boolean);
 }
 
-async function writeUsers(users) {
-  await put(USERS, JSON.stringify(users, null, 2), {
-    access: 'public',
-    contentType: 'application/json',
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    cacheControlMaxAge: 0,
-  });
-}
-
-/* The file is public (the Blob store is), so it must never hold anything that is
- * dangerous to read. Hashes and salts are safe; a plaintext password would not be. */
 export async function hashPassword(password) {
   const salt = randomBytes(16).toString('hex');
   const key = await scrypt(password, salt, KEYLEN);
@@ -63,9 +53,7 @@ export async function verifyPassword(password, stored) {
 
 const normalise = (email) => String(email ?? '').trim().toLowerCase();
 
-export const findByEmail = (users, email) =>
-  users.find((u) => u.email === normalise(email));
-
+export const findByEmail = (users, email) => users.find((u) => u.email === normalise(email));
 export const findById = (users, id) => users.find((u) => u.id === id);
 
 /* The admin is whoever signs up with ADMIN_EMAIL. Nothing in the signup form can grant
@@ -83,8 +71,9 @@ export async function createUser({ name, email, password }) {
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) throw new Error('That email looks wrong.');
   if (String(password ?? '').length < 8) throw new Error('Use at least 8 characters.');
 
-  const users = await readUsers();
-  if (findByEmail(users, cleanEmail)) throw new Error('That email already has an account.');
+  if (findByEmail(await readUsers(), cleanEmail)) {
+    throw new Error('That email already has an account.');
+  }
 
   const user = {
     id: `${Date.now().toString(36)}-${randomBytes(4).toString('hex')}`,
@@ -95,10 +84,14 @@ export async function createUser({ name, email, password }) {
     createdAt: new Date().toISOString(),
   };
 
-  users.push(user);
-  await writeUsers(users);
+  await put(`${DIR}${user.id}.json`, JSON.stringify(user), {
+    access: 'public',
+    contentType: 'application/json',
+    addRandomSuffix: false,
+  });
+
   return user;
 }
 
-/* What may safely be sent to the browser. */
+/* What may safely be sent to the browser: never the password hash. */
 export const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role });
