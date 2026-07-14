@@ -16,10 +16,13 @@
   tabSignin.addEventListener('click', () => tab(false));
   tabSignup.addEventListener('click', () => tab(true));
 
+  // Where a signed-in person belongs: a listener has no dashboard to go to.
+  const home = (user) => (user.role === 'listener' ? '/#beats' : '/dashboard');
+
   // Already signed in? Don't make them do it again.
   fetch('/api/auth')
     .then((r) => r.json())
-    .then((d) => d.user && location.replace('/dashboard'))
+    .then((d) => d.user && location.replace(home(d.user)))
     .catch(() => {});
 
   async function submit(form, note, body) {
@@ -37,7 +40,7 @@
         note.textContent = data.error ?? 'That did not work.';
         return;
       }
-      location.href = '/dashboard';
+      location.href = home(data.user);
     } catch {
       note.textContent = 'Could not reach the server.';
     }
@@ -59,6 +62,9 @@
       name: signup.name.value,
       email: signup.email.value,
       password: signup.password.value,
+      // The server decides what this is worth: it will not mint an admin, whatever
+      // is sent here.
+      role: signup.role.value,
     });
   });
 })();

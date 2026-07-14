@@ -23,10 +23,10 @@ export default async function handler(req, res) {
       return res.status(405).json({ error: 'Method not allowed.' });
     }
 
-    const { action, name, email, password } = req.body ?? {};
+    const { action, name, email, password, role } = req.body ?? {};
 
     if (action === 'signup') {
-      const user = await createUser({ name, email, password });
+      const user = await createUser({ name, email, password, role });
       res.setHeader('Set-Cookie', issueCookie(user));
       return res.status(201).json({ user: publicUser(user) });
     }

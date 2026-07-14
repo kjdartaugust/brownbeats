@@ -56,6 +56,15 @@
     });
     players.push(audio);
 
+    // Likes and comments live on the beat's own page: it is the thing a producer can
+    // share, and it is where the conversation is.
+    const social = document.createElement('a');
+    social.className = 'beat-social';
+    social.href = `/beat/${encodeURIComponent(beat.id)}`;
+    social.textContent =
+      `${beat.likedByMe ? '♥' : '♡'} ${beat.likes ?? 0}   💬 ${beat.comments ?? 0}`;
+    social.title = 'Open this beat';
+
     const foot = document.createElement('div');
     foot.className = 'beat-foot';
 
@@ -77,8 +86,17 @@
       el.appendChild(notes);
     }
 
-    el.append(audio, foot);
+    el.append(audio, social, foot);
     return el;
+  }
+
+  /* A beat page's "Enquire to buy" sends people here with ?buy=<id>. */
+  function prefillFromQuery(beats) {
+    const wanted = new URLSearchParams(location.search).get('buy');
+    if (!wanted) return;
+
+    const beat = beats.find((b) => b.id === wanted);
+    if (beat) enquire(beat);
   }
 
   async function render() {
@@ -103,6 +121,7 @@
 
     const players = [];
     beats.forEach((b) => box.appendChild(card(b, players)));
+    prefillFromQuery(beats);
   }
 
   render();

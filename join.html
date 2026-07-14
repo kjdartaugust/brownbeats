@@ -18,7 +18,7 @@
 
 <main class="section admin narrow">
   <h2 class="section-title">
-    Producers <small>upload your beats, keep your own catalogue</small>
+    Join <small>listen and comment, or upload your own beats</small>
   </h2>
 
   <div class="tabs">
@@ -42,8 +42,28 @@
 
   <!-- Create an account -->
   <form id="signupForm" class="contact-form" hidden>
+    <fieldset class="wide roles">
+      <legend>I'm here to…</legend>
+
+      <label class="role">
+        <input type="radio" name="role" value="listener" checked />
+        <span>
+          <strong>Listen</strong>
+          Like beats and join the comments.
+        </span>
+      </label>
+
+      <label class="role">
+        <input type="radio" name="role" value="producer" />
+        <span>
+          <strong>Sell my beats</strong>
+          Upload beats and samples, and manage your own catalogue.
+        </span>
+      </label>
+    </fieldset>
+
     <label class="wide">
-      <span>Producer name <small>shown on your beats</small></span>
+      <span>Your name <small>shown on your beats and comments</small></span>
       <input name="name" type="text" required placeholder="Kojo P" />
     </label>
     <label class="wide">

@@ -8,6 +8,7 @@
 
 import { handleUpload } from '@vercel/blob/client';
 import { currentUser } from './_auth.js';
+import { mayUpload } from './_users.js';
 
 const MAX_BYTES = 60 * 1024 * 1024; // 60 MB — a long WAV preview, with room to spare
 
@@ -25,6 +26,8 @@ export default async function handler(req, res) {
       onBeforeGenerateToken: async (pathname) => {
         const user = await currentUser(req);
         if (!user) throw new Error('Sign in first.');
+        // A listener account must not be able to put files in the store's bucket.
+        if (!mayUpload(user)) throw new Error('Only producers can upload beats.');
 
         return {
           allowedContentTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/ogg'],

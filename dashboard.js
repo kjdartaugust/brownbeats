@@ -7,7 +7,12 @@ import { upload } from 'https://esm.sh/@vercel/blob@1.1.1/client';
 import { requireSession, wireSignOut, renderBeats } from './manage.js';
 
 const user = await requireSession();
-if (user) {
+
+/* A listener has no catalogue. The API refuses their uploads anyway; this just avoids
+ * showing them a form that can only fail. */
+if (user && user.role === 'listener') {
+  location.replace('/#beats');
+} else if (user) {
   document.getElementById('who').textContent = user.name;
   document.getElementById('adminLink').hidden = user.role !== 'admin';
   wireSignOut(document.getElementById('signOut'));

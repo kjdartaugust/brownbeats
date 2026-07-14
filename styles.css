@@ -253,6 +253,80 @@ h1, h2, h3 { line-height: 1.2; }
 
 .beat-foot .amount { font-size: 20px; }
 
+.beat-social {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.beat-social:hover { color: var(--note); }
+
+/* ---------- one beat's page ---------- */
+
+.beat-page { max-width: 720px; }
+.beat-page h1 { margin: 12px 0 6px; font-size: clamp(28px, 5vw, 40px); }
+.beat-page .meta { margin: 0 0 16px; color: var(--muted); }
+.beat-page .beat-player { margin: 16px 0; }
+
+.beat-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.beat-actions .amount { margin-left: auto; }
+
+.btn.like {
+  gap: 6px;
+  min-width: 84px;
+  font-variant-numeric: tabular-nums; /* the count must not jog the button as it changes */
+}
+
+.btn.like.liked { border-color: var(--drum); color: var(--drum); }
+
+.preview-note { margin-top: 20px; }
+
+.comment .admin-meta { gap: 4px; }
+.comment-body { color: var(--text) !important; font-size: 15px; white-space: pre-wrap; }
+
+/* ---------- signup: which kind of account ---------- */
+
+.roles {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.roles legend {
+  padding: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.role {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.role:has(input:checked) {
+  border-color: var(--accent);
+  background: rgba(255, 209, 102, 0.06);
+}
+
+.role input { margin-top: 3px; accent-color: var(--accent); }
+.role span { display: flex; flex-direction: column; gap: 2px; }
+.role strong { color: var(--text); font-size: 14px; }
+.role span { font-size: 13px; color: var(--muted); }
+
 /* ---------- admin ---------- */
 
 .admin { max-width: 900px; }

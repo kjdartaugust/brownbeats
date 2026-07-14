@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beat — BROWNBEATS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="/">◆ BROWNBEATS</a>
+  <div class="nav-links">
+    <a href="/#beats">The store</a>
+    <a id="joinLink" href="/join">Sign in</a>
+    <span id="who" class="who" hidden></span>
+    <button id="signOut" class="btn" hidden>Sign out</button>
+  </div>
+</nav>
+
+<main class="section admin">
+  <p id="missing" class="form-note" hidden>That beat is gone.</p>
+
+  <article id="beat" class="beat-page" hidden>
+    <span class="tag" id="beatType">Beat</span>
+    <h1 id="beatTitle"></h1>
+    <p class="meta" id="beatMeta"></p>
+    <p id="beatNotes"></p>
+
+    <audio id="player" class="beat-player" controls preload="none"></audio>
+
+    <div class="beat-actions">
+      <button id="likeBtn" class="btn like">
+        <span id="heart">♡</span> <span id="likeCount">0</span>
+      </button>
+      <span class="amount" id="beatPrice"></span>
+      <a class="btn primary" id="buyBtn" href="/#contact">Enquire to buy</a>
+    </div>
+
+    <p class="notice preview-note">
+      This is a preview. The full trackouts come after you buy.
+    </p>
+
+    <h2 class="section-title" style="margin-top: 40px">
+      Comments <small id="commentCount"></small>
+    </h2>
+
+    <form id="commentForm" class="contact-form" hidden>
+      <label class="wide">
+        <span>Say something</span>
+        <textarea name="body" rows="2" required maxlength="600"
+                  placeholder="This one goes hard…"></textarea>
+      </label>
+      <button type="submit" class="btn primary wide">Post comment</button>
+      <p id="commentNote" class="form-note"></p>
+    </form>
+
+    <p id="signInToTalk" class="form-note" hidden>
+      <a href="/join">Sign in</a> to like this beat and join the conversation.
+    </p>
+
+    <div id="comments" class="admin-list" style="margin-top: 20px"></div>
+  </article>
+</main>
+
+<script type="module" src="beat.js"></script>
+</body>
+</html>

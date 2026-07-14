@@ -56,14 +56,21 @@ const normalise = (email) => String(email ?? '').trim().toLowerCase();
 export const findByEmail = (users, email) => users.find((u) => u.email === normalise(email));
 export const findById = (users, id) => users.find((u) => u.id === id);
 
-/* The admin is whoever signs up with ADMIN_EMAIL. Nothing in the signup form can grant
- * the role — it is decided here, from an environment variable only Vercel can set. */
-export function roleFor(email) {
+/* Three roles: listener (likes and comments), producer (also uploads), admin (also
+ * removes anything).
+ *
+ * The signup form may ask for producer or listener, and nothing more. Admin is decided
+ * here, from an environment variable only Vercel can set — so no amount of tampering
+ * with the request body can mint an admin. */
+export function roleFor(email, requested) {
   const admin = normalise(process.env.ADMIN_EMAIL);
-  return admin && normalise(email) === admin ? 'admin' : 'producer';
+  if (admin && normalise(email) === admin) return 'admin';
+  return requested === 'producer' ? 'producer' : 'listener';
 }
 
-export async function createUser({ name, email, password }) {
+export const mayUpload = (user) => user?.role === 'producer' || user?.role === 'admin';
+
+export async function createUser({ name, email, password, role }) {
   const cleanName = String(name ?? '').trim().slice(0, 60);
   const cleanEmail = normalise(email);
 
@@ -80,7 +87,7 @@ export async function createUser({ name, email, password }) {
     name: cleanName,
     email: cleanEmail,
     password: await hashPassword(password),
-    role: roleFor(cleanEmail),
+    role: roleFor(cleanEmail, role),
     createdAt: new Date().toISOString(),
   };
 
