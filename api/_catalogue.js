@@ -77,6 +77,21 @@ export async function removeBeat(id, user) {
   return { deleted: id };
 }
 
+/* Removing a producer takes their beats with them — leaving them on the store with a
+ * name attached to no account is worse than removing them. */
+export async function removeBeatsByOwner(ownerId) {
+  const mine = (await readEntries()).filter((e) => e.beat.ownerId === ownerId);
+
+  await Promise.all(
+    mine.map(async (e) => {
+      await del(e.entryUrl);
+      if (e.beat.url) await del(e.beat.url).catch(() => {});
+    })
+  );
+
+  return mine.length;
+}
+
 /* Never trust what the upload form posts: it reaches the public store. The owner comes
  * from the session, never from the request body — otherwise a producer could publish a
  * beat under someone else's name. */

@@ -10,7 +10,7 @@
  * A salt per user also means two producers who pick the same password get different
  * hashes, and one cracked password does not reveal the other. */
 
-import { list, put } from '@vercel/blob';
+import { list, put, del } from '@vercel/blob';
 import { randomBytes, scrypt as _scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 
@@ -91,6 +91,13 @@ export async function createUser({ name, email, password }) {
   });
 
   return user;
+}
+
+export async function removeUser(id) {
+  const { blobs } = await list({ prefix: `${DIR}${id}.json`, limit: 1 });
+  if (!blobs.length) return false;
+  await del(blobs[0].url);
+  return true;
 }
 
 /* What may safely be sent to the browser: never the password hash. */
