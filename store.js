@@ -19,6 +19,7 @@
     const label = beat.type === 'sample' ? 'sample' : 'beat';
     form.message.value =
       `I want to buy the ${label} "${beat.title}"` +
+      `${beat.ownerName ? ` by ${beat.ownerName}` : ''}` +
       `${beat.bpm ? ` (${beat.bpm} BPM${beat.key ? `, ${beat.key}` : ''})` : ''}.\n\n`;
 
     document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
@@ -41,7 +42,7 @@
 
     const meta = document.createElement('p');
     meta.className = 'meta';
-    meta.textContent = [beat.genre, beat.bpm && `${beat.bpm} BPM`, beat.key]
+    meta.textContent = [beat.ownerName, beat.genre, beat.bpm && `${beat.bpm} BPM`, beat.key]
       .filter(Boolean)
       .join(' · ');
 

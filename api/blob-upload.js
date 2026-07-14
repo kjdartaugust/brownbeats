@@ -1,13 +1,13 @@
-/* Mints a short-lived, single-upload token so the browser can send the audio file
- * straight to Blob storage. The file never touches this function — a serverless
- * request body is capped at 4.5 MB, and a beat is bigger than that.
+/* Mints a short-lived, single-upload token so the browser can send the audio straight to
+ * Blob storage. The file never touches this function — a serverless request body is
+ * capped at 4.5 MB, and a beat is bigger than that.
  *
- * The token is only issued to a signed-in admin, so this is not an open upload
- * endpoint: onBeforeGenerateToken throws for anyone else, and the size and content
- * types are pinned here rather than trusted from the client. */
+ * This is the endpoint that costs money if it is wrong, so it is the strictest: a token
+ * is only issued to a signed-in producer, and the size ceiling and allowed content types
+ * are pinned here rather than trusted from the client. */
 
 import { handleUpload } from '@vercel/blob/client';
-import { isAuthed } from './_auth.js';
+import { currentUser } from './_auth.js';
 
 const MAX_BYTES = 60 * 1024 * 1024; // 60 MB — a long WAV preview, with room to spare
 
@@ -23,17 +23,18 @@ export default async function handler(req, res) {
       request: req,
 
       onBeforeGenerateToken: async (pathname) => {
-        if (!isAuthed(req)) throw new Error('Not signed in.');
+        const user = await currentUser(req);
+        if (!user) throw new Error('Sign in first.');
 
         return {
           allowedContentTypes: ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/ogg'],
           maximumSizeInBytes: MAX_BYTES,
-          addRandomSuffix: true, // two beats may share a filename
-          pathname: `beats/${pathname}`,
+          addRandomSuffix: true, // two producers may upload the same filename
+          pathname: `beats/${user.id}/${pathname}`,
         };
       },
 
-      // Fires from Blob after the upload lands. The admin page records the beat in the
+      // Fires from Blob once the upload lands. The dashboard records the beat in the
       // catalogue itself, so there is nothing to do here.
       onUploadCompleted: async () => {},
     });

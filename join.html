@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Producers — BROWNBEATS</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="/">◆ BROWNBEATS</a>
+  <div class="nav-links">
+    <a href="/#beats">The store</a>
+  </div>
+</nav>
+
+<main class="section admin narrow">
+  <h2 class="section-title">
+    Producers <small>upload your beats, keep your own catalogue</small>
+  </h2>
+
+  <div class="tabs">
+    <button id="tabSignin" class="tab active">Sign in</button>
+    <button id="tabSignup" class="tab">Create an account</button>
+  </div>
+
+  <!-- Sign in -->
+  <form id="signinForm" class="contact-form">
+    <label class="wide">
+      <span>Email</span>
+      <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+    </label>
+    <label class="wide">
+      <span>Password</span>
+      <input name="password" type="password" required autocomplete="current-password" />
+    </label>
+    <button type="submit" class="btn primary wide">Sign in</button>
+    <p id="signinNote" class="form-note"></p>
+  </form>
+
+  <!-- Create an account -->
+  <form id="signupForm" class="contact-form" hidden>
+    <label class="wide">
+      <span>Producer name <small>shown on your beats</small></span>
+      <input name="name" type="text" required placeholder="Kojo P" />
+    </label>
+    <label class="wide">
+      <span>Email</span>
+      <input name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+    </label>
+    <label class="wide">
+      <span>Password <small>at least 8 characters</small></span>
+      <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+    </label>
+    <button type="submit" class="btn primary wide">Create account</button>
+    <p id="signupNote" class="form-note"></p>
+  </form>
+</main>
+
+<script src="join.js"></script>
+</body>
+</html>

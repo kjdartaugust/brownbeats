@@ -1,12 +1,12 @@
 /* The beat catalogue.
  *
- * There is no database. The catalogue is one JSON file in Blob storage, rewritten
- * whenever a beat is added or removed — which is fine because there is exactly one
- * writer (the producer) and the file is a few kilobytes.
+ * One JSON file in Blob, rewritten whenever a beat is added or removed. Each beat
+ * records who uploaded it, which is what lets a producer manage their own beats without
+ * being able to touch anyone else's.
  *
- * The audio itself is uploaded straight from the browser to Blob, so the audio never
- * passes through a function: a serverless request body caps out at 4.5 MB and a beat
- * is comfortably larger than that. */
+ * The audio itself is uploaded straight from the browser to Blob, so it never passes
+ * through a function: a serverless request body caps out at 4.5 MB and a beat is
+ * comfortably larger than that. */
 
 import { list, put } from '@vercel/blob';
 
@@ -38,8 +38,10 @@ export async function writeCatalogue(beats) {
   });
 }
 
-/* Never trust what the admin form posts: it reaches the public catalogue. */
-export function cleanBeat(input, { url, pathname }) {
+/* Never trust what the upload form posts: it reaches the public store. The owner comes
+ * from the session, never from the request body — otherwise a producer could upload a
+ * beat under someone else's name. */
+export function cleanBeat(input, { url, pathname }, owner) {
   const str = (v, max) => String(v ?? '').trim().slice(0, max);
   const num = (v) => {
     const n = Number(v);
@@ -61,6 +63,12 @@ export function cleanBeat(input, { url, pathname }) {
     notes: str(input.notes, 300),
     url,
     pathname,
+    ownerId: owner.id,
+    ownerName: owner.name,
     addedAt: new Date().toISOString(),
   };
 }
+
+/* A producer owns their beats; an admin may remove anything. */
+export const mayDelete = (beat, user) =>
+  user.role === 'admin' || beat.ownerId === user.id;
