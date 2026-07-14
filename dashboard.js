@@ -5,6 +5,7 @@
 
 import { upload } from 'https://esm.sh/@vercel/blob@1.1.1/client';
 import { requireSession, wireSignOut, renderBeats } from './manage.js';
+import { toast } from './ui.js';
 
 const user = await requireSession();
 
@@ -37,21 +38,31 @@ if (user && user.role === 'listener') {
     if (!file) return;
 
     const button = form.querySelector('button[type="submit"]');
+    const bar = document.getElementById('uploadBar');
+    const fill = document.getElementById('uploadFill');
+
     button.disabled = true;
+    button.textContent = 'Uploading…';
+    bar.hidden = false;
+    fill.style.width = '0%';
+
+    // A beat is tens of megabytes on a phone connection: a percentage that moves is the
+    // difference between waiting and assuming it has hung.
+    const progress = toast('Uploading… 0%', 'busy', { sticky: true });
 
     try {
-      uploadNote.textContent = 'Uploading… 0%';
-
       // Straight to Blob. /api/blob-upload only mints the token, and only for a producer.
       const blob = await upload(file.name, file, {
         access: 'public',
         handleUploadUrl: '/api/blob-upload',
         onUploadProgress: ({ percentage }) => {
-          uploadNote.textContent = `Uploading… ${Math.round(percentage)}%`;
+          const pct = Math.round(percentage);
+          fill.style.width = `${pct}%`;
+          progress.update(`Uploading… ${pct}%`, 'busy');
         },
       });
 
-      uploadNote.textContent = 'Saving…';
+      progress.update('Saving…', 'busy');
 
       const res = await fetch('/api/beats', {
         method: 'POST',
@@ -75,12 +86,18 @@ if (user && user.role === 'listener') {
       }
 
       form.reset();
-      uploadNote.textContent = 'Live on the store.';
+      progress.dismiss();
+      toast(`"${blob.pathname.split('/').pop()}" is live on the store.`, 'ok');
+      uploadNote.textContent = '';
       refresh();
     } catch (err) {
+      progress.dismiss();
+      toast(err.message ?? 'Upload failed.', 'bad');
       uploadNote.textContent = err.message ?? 'Upload failed.';
     } finally {
       button.disabled = false;
+      button.textContent = 'Upload';
+      bar.hidden = true;
     }
   });
 }

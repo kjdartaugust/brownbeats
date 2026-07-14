@@ -1,6 +1,8 @@
 /* Shared by the producer dashboard and the admin panel: the signed-in user, and the
  * list of beat rows with a remove button. */
 
+import { createPlayer } from './player.js';
+
 export const money = (n) => (typeof n === 'number' && n > 0 ? `₵${n.toLocaleString()}` : '—');
 
 export async function me() {
@@ -60,10 +62,7 @@ export function renderBeats(listEl, beats, { showOwner = false, onRemoved } = {}
 
     meta.append(title, sub);
 
-    const audio = document.createElement('audio');
-    audio.controls = true;
-    audio.preload = 'none';
-    audio.src = b.url;
+    const audio = createPlayer(b.url, { compact: true });
 
     const remove = document.createElement('button');
     remove.className = 'btn danger';

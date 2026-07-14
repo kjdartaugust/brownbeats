@@ -1,6 +1,8 @@
 /* One beat: play it, like it, talk about it. */
 
 import { me, wireSignOut, money } from './manage.js';
+import { createPlayer } from './player.js';
+import { toast } from './ui.js';
 
 const id = new URLSearchParams(location.search).get('id') ?? location.pathname.split('/').pop();
 
@@ -38,7 +40,7 @@ function render(beat) {
   el('beatNotes').textContent = beat.notes ?? '';
   el('beatNotes').hidden = !beat.notes;
 
-  el('player').src = beat.url;
+  el('player').replaceWith(createPlayer(beat.url));
   el('beatPrice').textContent = money(beat.price);
 
   // The buy flow lives on the home page's booking form; carry the beat over to it.

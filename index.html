@@ -16,7 +16,7 @@
     <a href="#beats">Beats</a>
     <a href="#services">Services</a>
     <a href="#studio">Studio</a>
-    <a href="/join">Producers</a>
+    <a id="joinLink" href="/join">Producers</a>
     <a href="#contact" class="nav-cta">Book a session</a>
   </div>
 </nav>
@@ -67,12 +67,27 @@
     </div>
   </section>
 
-  <!-- Populated from /api/beats. The producer uploads these at /admin. -->
+  <!-- Populated from /api/beats. Producers upload these at /dashboard. -->
   <section id="beats" class="section">
     <h2 class="section-title">Beats for sale <small>press play, then make me an offer</small></h2>
-    <div id="beatStore" class="cards">
-      <p class="form-note">Loading the beats…</p>
+
+    <div id="storeControls" class="store-controls" hidden>
+      <input id="storeSearch" type="search" placeholder="Search title, producer, genre, key…"
+             aria-label="Search beats" />
+      <select id="storeFilter" aria-label="Filter by type">
+        <option value="all">Everything</option>
+        <option value="beat">Beats only</option>
+        <option value="sample">Samples only</option>
+      </select>
+      <select id="storeSort" aria-label="Sort">
+        <option value="newest">Newest</option>
+        <option value="liked">Most liked</option>
+        <option value="cheap">Cheapest</option>
+        <option value="bpm">Slowest BPM</option>
+      </select>
     </div>
+
+    <div id="beatStore" class="cards"></div>
   </section>
 
   <section id="services" class="section">
@@ -272,6 +287,6 @@
 
 <script src="audio.js"></script>
 <script src="app.js"></script>
-<script src="store.js"></script>
+<script type="module" src="/store.js"></script>
 </body>
 </html>
