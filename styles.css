@@ -19,6 +19,10 @@
 
 * { box-sizing: border-box; }
 
+/* The browser's own [hidden] rule is `display: none`, which any author `display` beats —
+ * and .contact-form sets `display: grid`. Without this, hiding a form does nothing. */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
