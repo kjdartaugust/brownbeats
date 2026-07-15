@@ -69,6 +69,9 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
+  /* The hero's ambient glow bleeds past the viewport edges by design; clip contains it
+     without creating a scroll container (which would break the sticky nav). */
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   /* The platform's own UI typeface — SF on Apple, Segoe on Windows, Roboto on Android.
