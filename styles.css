@@ -155,6 +155,10 @@ h1, h2, h3 {
 
 .hero {
   position: relative;
+  /* Contain the ambient glow at its source so its horizontal bleed cannot widen the
+     page. clip (not hidden) keeps it out of the scroll calculation without affecting
+     anything else in the hero. */
+  overflow: clip;
   max-width: 1180px;
   margin: 0 auto;
   padding: 104px 32px 76px;
