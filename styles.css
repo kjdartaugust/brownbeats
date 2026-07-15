@@ -47,7 +47,14 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* The hero's ambient glow bleeds past the viewport edges by design. The clip must be
+     on the root, since that is where the page's own scrollbar lives; clip (unlike
+     hidden/auto) contains it without becoming a scroll container, so the sticky nav is
+     unaffected. */
+  overflow-x: clip;
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -69,9 +76,6 @@ html { scroll-behavior: smooth; }
 
 body {
   margin: 0;
-  /* The hero's ambient glow bleeds past the viewport edges by design; clip contains it
-     without creating a scroll container (which would break the sticky nav). */
-  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   /* The platform's own UI typeface — SF on Apple, Segoe on Windows, Roboto on Android.
